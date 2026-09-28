@@ -8,6 +8,7 @@ import TermsPage from "./pages/legal/Terms.tsx";
 import PrivacyPage from "./pages/legal/Privacy.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { useServiceWorker } from "@/hooks/use-service-worker.ts";
+import { WhatsappButton } from "@/components/whatsapp-button.tsx";
 
 export default function App() {
   useServiceWorker();
@@ -26,6 +27,7 @@ export default function App() {
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <WhatsappButton />
       </BrowserRouter>
     </DefaultProviders>
   );

@@ -233,6 +233,24 @@ export default function Index() {
         </div>
       </section>
 
+      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="card-glow border-primary/25 overflow-hidden rounded-2xl border"
+        >
+          <img
+            src="/preview.jpg"
+            alt="Passport Desk product preview: drag and drop a passport to get a structured Excel export"
+            width={1599}
+            height={1066}
+            className="w-full object-cover"
+          />
+        </motion.div>
+      </section>
+
       <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
         <div className="mb-10 max-w-2xl space-y-3">
           <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">

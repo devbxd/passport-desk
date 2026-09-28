@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { PLANS } from "@/lib/plans.ts";
+import { whatsappLink } from "@/lib/whatsapp.ts";
 
 export default function PricingSection() {
   return (
@@ -65,37 +66,54 @@ export default function PricingSection() {
                   </li>
                 ))}
               </ul>
-              <Authenticated>
+              {plan.id === "free" ? (
+                <>
+                  <Authenticated>
+                    <Button className="mt-auto" variant="secondary" asChild>
+                      <a href="#pricing">Current plan info</a>
+                    </Button>
+                  </Authenticated>
+                  <Unauthenticated>
+                    <SignInButton
+                      className="mt-auto w-full"
+                      variant="secondary"
+                      signInText="Get started free"
+                    />
+                  </Unauthenticated>
+                </>
+              ) : (
                 <Button
-                  className="mt-auto"
-                  variant={plan.highlighted ? "default" : "secondary"}
+                  className={
+                    plan.highlighted
+                      ? "bg-gold-gradient text-primary-foreground mt-auto hover:brightness-110"
+                      : "mt-auto"
+                  }
+                  variant={plan.highlighted ? undefined : "secondary"}
                   asChild
                 >
                   <a
-                    href={
-                      plan.id === "free"
-                        ? "#pricing"
-                        : `mailto:hello@passportdesk.app?subject=Upgrade%20to%20${plan.name}`
-                    }
+                    href={whatsappLink(
+                      `Hi! I'd like to subscribe to the ${plan.name} plan on Passport Desk.`,
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    {plan.id === "free" ? "Current plan info" : `Upgrade to ${plan.name}`}
+                    Subscribe to {plan.name}
                   </a>
                 </Button>
-              </Authenticated>
-              <Unauthenticated>
-                <SignInButton
-                  className="mt-auto w-full"
-                  variant={plan.highlighted ? "default" : "secondary"}
-                  signInText={plan.id === "free" ? "Get started free" : `Get started with ${plan.name}`}
-                />
-              </Unauthenticated>
+              )}
             </Card>
           </motion.div>
         ))}
       </div>
       <p className="text-muted-foreground mt-6 text-center text-sm">
         Need more than 600 scans a month?{" "}
-        <a href="mailto:hello@passportdesk.app" className="text-foreground underline">
+        <a
+          href={whatsappLink("Hi! I'd like to talk about a custom plan for Passport Desk.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-foreground underline"
+        >
           Contact us
         </a>{" "}
         about a custom plan.
