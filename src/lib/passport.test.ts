@@ -1,9 +1,34 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   EMPTY_PASSPORT,
+  calculateAge,
   getExpiryAlerts,
   validatePassportFields,
 } from "@/lib/passport.ts";
+
+describe("calculateAge", () => {
+  it("counts whole years and only ticks over on the birthday", () => {
+    expect(calculateAge("1970-10-17", "2026-10-16")).toBe(55);
+    expect(calculateAge("1970-10-17", "2026-10-17")).toBe(56);
+    expect(calculateAge("1970-10-17", "2026-12-31")).toBe(56);
+  });
+
+  it("handles a leap-day birthday in a non-leap year", () => {
+    expect(calculateAge("2000-02-29", "2026-02-28")).toBe(25);
+    expect(calculateAge("2000-02-29", "2026-03-01")).toBe(26);
+  });
+
+  it("returns 0 for a baby under one year", () => {
+    expect(calculateAge("2026-06-01", "2026-09-27")).toBe(0);
+  });
+
+  it("returns null for missing, invalid or future birth dates", () => {
+    expect(calculateAge("", "2026-09-27")).toBeNull();
+    expect(calculateAge("2000-02-30", "2026-09-27")).toBeNull();
+    expect(calculateAge("not-a-date", "2026-09-27")).toBeNull();
+    expect(calculateAge("2030-01-01", "2026-09-27")).toBeNull();
+  });
+});
 
 describe("validatePassportFields", () => {
   it("requires the identifying fields", () => {

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
@@ -11,6 +12,7 @@ import {
 import {
   PASSPORT_FIELDS,
   REQUIRED_FIELDS,
+  calculateAge,
   type PassportFieldKey,
   type PassportRecordFields,
   type PassportValidationIssue,
@@ -30,6 +32,7 @@ export default function PassportForm({
   const setField = (key: PassportFieldKey, fieldValue: string) => {
     onChange({ ...value, [key]: fieldValue });
   };
+  const age = calculateAge(value.dateOfBirth);
 
   return (
     <div className="space-y-5">
@@ -42,7 +45,8 @@ export default function PassportForm({
           const issueId = `${field.key}-validation`;
 
           return (
-            <div key={field.key} className="space-y-2">
+            <Fragment key={field.key}>
+            <div className="space-y-2">
               <Label htmlFor={field.key}>
                 {field.label}
                 {REQUIRED_FIELDS.includes(field.key) && (
@@ -99,6 +103,20 @@ export default function PassportForm({
                 </div>
               )}
             </div>
+            {field.key === "dateOfBirth" && (
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  readOnly
+                  tabIndex={-1}
+                  value={age === null ? "" : `${age} ${age === 1 ? "year" : "years"}`}
+                  placeholder="Calculated from date of birth"
+                  className="bg-muted/50"
+                />
+              </div>
+            )}
+            </Fragment>
           );
         })}
       </div>

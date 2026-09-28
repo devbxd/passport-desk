@@ -33,7 +33,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Never intercept cross-origin requests. The Hercules CDN and other third parties already set their own HTTP cache headers
+  // Never intercept cross-origin requests. CDNs and other third parties already set their own HTTP cache headers
   let url;
   try {
     url = new URL(event.request.url);
@@ -80,7 +80,7 @@ self.addEventListener("fetch", (event) => {
 
   // Network-first for static assets. A saved shell references the chunks it
   // was loaded with, and a publish removes those from the server.
-  // Hercules answers a missing file with the app's HTML (status 200), so treat
+  // The host (SPA rewrite) answers a missing file with the app's HTML (status 200), so treat
   // an HTML answer to a non-page request like a 404: never cache it, and fall
   // back to the cached copy when there is one.
   event.respondWith(

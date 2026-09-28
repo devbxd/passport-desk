@@ -60,21 +60,8 @@ export const extract = action({
       });
     }
 
-    await ctx.runMutation(internal.scanUsage.consumeScan, {
-      ownerTokenIdentifier: identity.tokenIdentifier,
-    });
-
-    const imageUrl = await ctx.runQuery(internal.passports.getImageUrl, {
-      storageId,
-      ownerTokenIdentifier: identity.tokenIdentifier,
-    });
-    if (!imageUrl) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Uploaded image could not be found",
-      });
-    }
-
+    // Checked before spending a scan so a misconfigured deployment never
+    // eats anyone's monthly quota.
     const apiKey = env("OPENAI_API_KEY");
     if (!apiKey) {
       throw new ConvexError({
@@ -82,6 +69,27 @@ export const extract = action({
         message: "Scanning is not configured (missing OPENAI_API_KEY).",
       });
     }
+
+    await ctx.runMutation(internal.scanUsage.consumeScan, {
+      ownerTokenIdentifier: identity.tokenIdentifier,
+    });
+    const refund = () =>
+      ctx.runMutation(internal.scanUsage.refundScan, {
+        ownerTokenIdentifier: identity.tokenIdentifier,
+      });
+
+    const imageUrl = await ctx.runQuery(internal.passports.getImageUrl, {
+      storageId,
+      ownerTokenIdentifier: identity.tokenIdentifier,
+    });
+    if (!imageUrl) {
+      await refund();
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Uploaded image could not be found",
+      });
+    }
+
     // Any OpenAI-compatible service works (OpenAI, Gemini's compatibility
     // endpoint, ...) — set OPENAI_BASE_URL to switch providers.
     const openai = new OpenAI({
@@ -118,7 +126,11 @@ export const extract = action({
       }
       return parsed;
     } catch (error) {
+      // "Could not read this document" stays charged (the AI did run, and
+      // refunding it would let bad uploads cost us for free). Provider and
+      // network failures are our fault, so the scan is given back.
       if (error instanceof ConvexError) throw error;
+      await refund();
       if (error instanceof OpenAI.APIError) {
         throw new ConvexError({
           code: "EXTERNAL_SERVICE_ERROR",

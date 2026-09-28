@@ -55,6 +55,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
 import {
+  calculateAge,
   classifyExpiry,
   daysUntilExpiry,
   fullName,
@@ -416,6 +417,7 @@ function RecordsTable() {
                 <TableHead>Passport no.</TableHead>
                 <TableHead>Nationality</TableHead>
                 <TableHead>Date of birth</TableHead>
+                <TableHead>Age</TableHead>
                 <TableHead>Expiry</TableHead>
                 <TableHead>Scanned</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -439,6 +441,7 @@ function RecordsTable() {
                   </TableCell>
                   <TableCell>{record.nationality || "—"}</TableCell>
                   <TableCell>{record.dateOfBirth || "—"}</TableCell>
+                  <TableCell>{calculateAge(record.dateOfBirth) ?? "—"}</TableCell>
                   <TableCell>
                     <ExpiryCell dateOfExpiry={record.dateOfExpiry} />
                   </TableCell>

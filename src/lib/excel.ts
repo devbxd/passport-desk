@@ -1,5 +1,9 @@
 import * as XLSX from "xlsx";
-import { PASSPORT_FIELDS, type PassportRecordFields } from "./passport.ts";
+import {
+  PASSPORT_FIELDS,
+  calculateAge,
+  type PassportRecordFields,
+} from "./passport.ts";
 
 export type ExportableRecord = PassportRecordFields & {
   _creationTime: number;
@@ -8,11 +12,21 @@ export type ExportableRecord = PassportRecordFields & {
 
 const EXTRA_HEADERS = ["MRZ", "Notes", "Confidence %", "Scanned At"] as const;
 
+// "Age" sits right after Date of Birth. It's computed at export time so the
+// spreadsheet always shows the pilgrim's current age.
+const HEADERS: string[] = [
+  ...PASSPORT_FIELDS.flatMap((field) =>
+    field.key === "dateOfBirth" ? [field.excelHeader, "Age"] : [field.excelHeader],
+  ),
+  ...EXTRA_HEADERS,
+];
+
 function toRow(record: ExportableRecord): Record<string, string | number> {
   const row: Record<string, string | number> = {};
   for (const field of PASSPORT_FIELDS) {
     row[field.excelHeader] = record[field.key];
   }
+  row["Age"] = calculateAge(record.dateOfBirth) ?? "";
   row["MRZ"] = record.mrz;
   row["Notes"] = record.notes;
   row["Confidence %"] = record.confidence;
@@ -26,19 +40,15 @@ export function exportPassportsToExcel(
   records: ExportableRecord[],
   fileName = `passport-records-${new Date().toISOString().slice(0, 10)}.xlsx`,
 ): void {
-  const headers = [
-    ...PASSPORT_FIELDS.map((field) => field.excelHeader),
-    ...EXTRA_HEADERS,
-  ];
-  const sheet = XLSX.utils.json_to_sheet(records.map(toRow), { header: headers });
+  const sheet = XLSX.utils.json_to_sheet(records.map(toRow), { header: HEADERS });
 
-  sheet["!cols"] = headers.map((header) => ({
-    wch: header === "MRZ" ? 46 : Math.max(14, header.length + 2),
+  sheet["!cols"] = HEADERS.map((header) => ({
+    wch: header === "MRZ" ? 46 : header === "Age" ? 8 : Math.max(14, header.length + 2),
   }));
   sheet["!autofilter"] = {
     ref: XLSX.utils.encode_range({
       s: { c: 0, r: 0 },
-      e: { c: headers.length - 1, r: Math.max(records.length, 1) },
+      e: { c: HEADERS.length - 1, r: Math.max(records.length, 1) },
     }),
   };
 

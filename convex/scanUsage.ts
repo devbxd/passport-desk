@@ -129,20 +129,19 @@ export const getUsageForOwner = internalQuery({
   },
 });
 
-// Dev/support-only helper until a payment provider exists: lets an
-// authenticated user set their own plan. Intentionally unauthenticated
-// against a payment source since there is no billing to verify against yet.
-export const setMyPlan = mutation({
-  args: { plan: v.union(v.literal("free"), v.literal("pro"), v.literal("business")) },
-  handler: async (ctx, { plan }) => {
-    const identity = await requireIdentity(ctx);
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+// Gives back a scan that was consumed but never delivered a result because
+// the AI provider or network failed, so users aren't charged for our errors.
+export const refundScan = internalMutation({
+  args: { ownerTokenIdentifier: v.string() },
+  handler: async (ctx, { ownerTokenIdentifier }) => {
+    const usage = await ctx.db
+      .query("scanUsage")
+      .withIndex("by_owner_and_month", (q) =>
+        q.eq("ownerTokenIdentifier", ownerTokenIdentifier).eq("month", currentMonth()),
+      )
       .unique();
-    if (!user) {
-      throw new ConvexError({ code: "NOT_FOUND", message: "User not found" });
+    if (usage && usage.count > 0) {
+      await ctx.db.patch("scanUsage", usage._id, { count: usage.count - 1 });
     }
-    await ctx.db.patch("users", user._id, { plan });
   },
 });

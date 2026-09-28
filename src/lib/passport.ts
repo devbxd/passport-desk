@@ -216,6 +216,22 @@ export function validatePassportFields(
   return issues;
 }
 
+/**
+ * Age in whole years on `today`, or null when the date of birth is missing,
+ * invalid or in the future. Always derived, never stored, so it can't go stale.
+ */
+export function calculateAge(
+  dateOfBirth: string,
+  today = localToday(),
+): number | null {
+  if (!isValidCalendarDate(dateOfBirth) || !isValidCalendarDate(today)) return null;
+  const [birthYear, birthMonth, birthDay] = dateOfBirth.split("-").map(Number);
+  const [year, month, day] = today.split("-").map(Number);
+  let age = year - birthYear;
+  if (month < birthMonth || (month === birthMonth && day < birthDay)) age -= 1;
+  return age >= 0 ? age : null;
+}
+
 export function fullName(record: PassportRecordFields): string {
   return [record.givenNames, record.surname].filter(Boolean).join(" ").trim();
 }
