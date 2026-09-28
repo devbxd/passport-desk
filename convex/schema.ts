@@ -9,7 +9,19 @@ export default defineSchema({
     plan: v.optional(
       v.union(v.literal("free"), v.literal("pro"), v.literal("business")),
     ),
-  }).index("by_token", ["tokenIdentifier"]),
+    // ISO date after which a paid plan lapses back to free. Absent = never.
+    planExpiresAt: v.optional(v.string()),
+  })
+    .index("by_token", ["tokenIdentifier"])
+    .index("by_email", ["email"]),
+
+  // A plan granted to an email that hasn't signed up yet. It is applied (and
+  // deleted) the first time someone signs in with that verified email.
+  planGrants: defineTable({
+    email: v.string(),
+    plan: v.union(v.literal("free"), v.literal("pro"), v.literal("business")),
+    days: v.optional(v.number()),
+  }).index("by_email", ["email"]),
 
   scanUsage: defineTable({
     ownerTokenIdentifier: v.string(),

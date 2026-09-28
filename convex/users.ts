@@ -1,5 +1,6 @@
 import { ConvexError } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { expiryFromDays } from "./lib/plans";
 
 export const updateCurrentUser = mutation({
   args: {},
@@ -22,12 +23,25 @@ export const updateCurrentUser = mutation({
     if (user !== null) {
       return user._id;
     }
-    // If it's a new identity, create a new User.
-    return await ctx.db.insert("users", {
+    // If it's a new identity, create a new User. If a plan was granted to this
+    // email before they signed up, it is applied now and the grant consumed.
+    const email = identity.email?.trim().toLowerCase();
+    const grant = email
+      ? await ctx.db
+          .query("planGrants")
+          .withIndex("by_email", (q) => q.eq("email", email))
+          .first()
+      : null;
+    const userId = await ctx.db.insert("users", {
       name: identity.name,
-      email: identity.email,
+      email,
       tokenIdentifier: identity.tokenIdentifier,
+      ...(grant
+        ? { plan: grant.plan, planExpiresAt: expiryFromDays(grant.days) }
+        : {}),
     });
+    if (grant) await ctx.db.delete("planGrants", grant._id);
+    return userId;
   },
 });
 

@@ -11,6 +11,7 @@
 import type * as lib_plans from "../lib/plans.js";
 import type * as passportScan from "../passportScan.js";
 import type * as passports from "../passports.js";
+import type * as plans from "../plans.js";
 import type * as scanUsage from "../scanUsage.js";
 import type * as users from "../users.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   "lib/plans": typeof lib_plans;
   passportScan: typeof passportScan;
   passports: typeof passports;
+  plans: typeof plans;
   scanUsage: typeof scanUsage;
   users: typeof users;
 }>;

@@ -7,7 +7,7 @@ import {
   type MutationCtx,
   type QueryCtx,
 } from "./_generated/server";
-import { DEFAULT_PLAN, PLAN_SCAN_LIMITS, type PlanId } from "./lib/plans";
+import { PLAN_SCAN_LIMITS, effectivePlan, type PlanId } from "./lib/plans";
 
 async function requireIdentity(ctx: QueryCtx | MutationCtx) {
   const identity = await ctx.auth.getUserIdentity();
@@ -32,7 +32,7 @@ async function getPlanForOwner(
     .query("users")
     .withIndex("by_token", (q) => q.eq("tokenIdentifier", ownerTokenIdentifier))
     .unique();
-  return user?.plan ?? DEFAULT_PLAN;
+  return effectivePlan(user);
 }
 
 export const getUsage = query({
@@ -53,7 +53,7 @@ export const getUsage = query({
         .unique(),
     ]);
 
-    const plan = user?.plan ?? DEFAULT_PLAN;
+    const plan = effectivePlan(user);
     const limit = PLAN_SCAN_LIMITS[plan];
     const used = usage?.count ?? 0;
 
@@ -122,7 +122,7 @@ export const getUsageForOwner = internalQuery({
         )
         .unique(),
     ]);
-    const plan = user?.plan ?? DEFAULT_PLAN;
+    const plan = effectivePlan(user);
     const limit = PLAN_SCAN_LIMITS[plan];
     const used = usage?.count ?? 0;
     return { plan, limit, used, limitReached: used >= limit };
