@@ -25,7 +25,16 @@ import {
 } from "@/components/ui/accordion.tsx";
 import PricingSection from "./_components/pricing-section.tsx";
 
-const HERO_IMAGE = "/hero.png";
+const LOGO_IMAGE = "/logo.jpg";
+
+const SPARKLES = [
+  { top: "8%", left: "6%", size: 6, delay: 0 },
+  { top: "22%", left: "46%", size: 4, delay: 1.2 },
+  { top: "68%", left: "3%", size: 5, delay: 0.6 },
+  { top: "82%", left: "44%", size: 7, delay: 2 },
+  { top: "12%", left: "92%", size: 5, delay: 0.9 },
+  { top: "60%", left: "96%", size: 4, delay: 1.6 },
+];
 
 const STEPS = [
   {
@@ -108,24 +117,48 @@ const FAQS = [
 export default function Index() {
   return (
     <div>
-      <section className="relative overflow-hidden">
+      <section className="dark bg-background text-foreground bg-royal relative overflow-hidden">
         <div
           aria-hidden
-          className="from-accent/50 via-background to-background absolute inset-0 bg-gradient-to-b"
+          className="bg-geo absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
         />
-        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
+        {SPARKLES.map((sparkle) => (
+          <motion.span
+            key={sparkle.top + sparkle.left}
+            aria-hidden
+            className="bg-gold-gradient absolute rounded-full"
+            style={{
+              top: sparkle.top,
+              left: sparkle.left,
+              width: sparkle.size,
+              height: sparkle.size,
+            }}
+            animate={{ opacity: [0.15, 1, 0.15], scale: [0.8, 1.4, 0.8] }}
+            transition={{
+              duration: 3.5,
+              repeat: Infinity,
+              delay: sparkle.delay,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="space-y-6"
+            className="space-y-7"
           >
-            <span className="border-border bg-card text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-              <ShieldCheck className="size-3.5" />
-              Private to your account
+            <span className="border-primary/40 bg-primary/10 text-gold-soft inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium tracking-wide backdrop-blur">
+              <Sparkles className="text-primary size-3.5" />
+              From passport to Excel, in seconds
             </span>
-            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-balance sm:text-6xl">
-              Turn passports into spreadsheet rows in seconds.
+            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-balance sm:text-6xl lg:text-7xl">
+              Turn passports into{" "}
+              <span className="text-gold-gradient animate-shimmer">
+                spreadsheet rows
+              </span>{" "}
+              in seconds.
             </h1>
             <p className="text-muted-foreground max-w-xl text-lg text-balance">
               A professional check-in desk tool for hotels, travel agencies and
@@ -134,19 +167,37 @@ export default function Index() {
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Authenticated>
-                <Button size="lg" asChild>
+                <Button
+                  size="lg"
+                  className="bg-gold-gradient text-primary-foreground shadow-[0_10px_40px_-10px_var(--gold)] hover:brightness-110"
+                  asChild
+                >
                   <Link to="/scan">
                     <ScanLine className="size-4" />
                     Start scanning
                   </Link>
                 </Button>
-                <Button size="lg" variant="secondary" asChild>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-primary/40 hover:bg-primary/10"
+                  asChild
+                >
                   <Link to="/records">View records</Link>
                 </Button>
               </Authenticated>
               <Unauthenticated>
-                <SignInButton size="lg" signInText="Get started free" />
-                <Button size="lg" variant="secondary" asChild>
+                <SignInButton
+                  size="lg"
+                  signInText="Get started free"
+                  className="bg-gold-gradient text-primary-foreground shadow-[0_10px_40px_-10px_var(--gold)] hover:brightness-110"
+                />
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-primary/40 hover:bg-primary/10"
+                  asChild
+                >
                   <a href="#pricing">See pricing</a>
                 </Button>
               </Unauthenticated>
@@ -154,7 +205,7 @@ export default function Index() {
             <div className="text-muted-foreground flex flex-wrap gap-x-6 gap-y-2 pt-2 text-sm">
               {AUDIENCES.map((audience) => (
                 <span key={audience.label} className="flex items-center gap-2">
-                  <audience.icon className="size-4" />
+                  <audience.icon className="text-primary size-4" />
                   {audience.label}
                 </span>
               ))}
@@ -162,15 +213,21 @@ export default function Index() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-            className="relative"
+            transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+            className="relative mx-auto w-full max-w-lg"
           >
+            <div
+              aria-hidden
+              className="bg-primary/25 absolute -inset-8 rounded-full blur-3xl"
+            />
             <img
-              src={HERO_IMAGE}
-              alt="A passport and a laptop showing a spreadsheet on a reception desk"
-              className="border-border w-full rounded-xl border object-cover shadow-2xl"
+              src={LOGO_IMAGE}
+              alt="Passport Desk: a passport turning into an Excel spreadsheet"
+              width={1000}
+              height={1000}
+              className="glow-gold animate-float relative w-full rounded-[2rem] object-cover"
             />
           </motion.div>
         </div>
@@ -178,8 +235,11 @@ export default function Index() {
 
       <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
         <div className="mb-10 max-w-2xl space-y-3">
-          <h2 className="font-serif text-3xl tracking-tight sm:text-4xl">
-            Three steps, no typing
+          <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">
+            How it works
+          </p>
+          <h2 className="font-serif text-3xl tracking-tight sm:text-5xl">
+            Three steps, <span className="text-gold-gradient">no typing</span>
           </h2>
           <p className="text-muted-foreground">
             What used to be five minutes of manual data entry per guest becomes
@@ -199,12 +259,12 @@ export default function Index() {
                 ease: "easeOut",
               }}
             >
-              <Card className="h-full p-6">
+              <Card className="card-glow border-primary/20 h-full p-6">
                 <div className="flex items-center justify-between">
-                  <span className="bg-secondary text-secondary-foreground flex size-10 items-center justify-center rounded-md">
+                  <span className="bg-gold-gradient flex size-11 items-center justify-center rounded-xl text-[oklch(0.2_0.06_300)] shadow-[0_8px_24px_-8px_var(--gold)]">
                     <step.icon className="size-5" />
                   </span>
-                  <span className="text-muted-foreground/50 font-serif text-2xl">
+                  <span className="text-gold-gradient font-serif text-4xl">
                     {step.step}
                   </span>
                 </div>
@@ -218,11 +278,18 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="bg-card border-y">
-        <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
+      <section className="bg-card relative overflow-hidden border-y">
+        <div
+          aria-hidden
+          className="bg-geo absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]"
+        />
+        <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
           <div className="mb-10 max-w-2xl space-y-3">
-            <h2 className="font-serif text-3xl tracking-tight sm:text-4xl">
-              Built for a real front desk
+            <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">
+              Why Passport Desk
+            </p>
+            <h2 className="font-serif text-3xl tracking-tight sm:text-5xl">
+              Built for a <span className="text-gold-gradient">real front desk</span>
             </h2>
             <p className="text-muted-foreground">
               Accuracy, auditability and speed, without the clutter of a full
@@ -241,9 +308,9 @@ export default function Index() {
                   delay: index * 0.08,
                   ease: "easeOut",
                 }}
-                className="flex gap-4"
+                className="card-glow border-primary/20 bg-background/50 flex gap-4 rounded-xl border p-5 backdrop-blur"
               >
-                <span className="bg-secondary text-secondary-foreground flex size-10 shrink-0 items-center justify-center rounded-md">
+                <span className="bg-gold-gradient flex size-11 shrink-0 items-center justify-center rounded-xl text-[oklch(0.2_0.06_300)] shadow-[0_8px_24px_-8px_var(--gold)]">
                   <feature.icon className="size-5" />
                 </span>
                 <div className="space-y-1.5">
@@ -261,8 +328,8 @@ export default function Index() {
       <PricingSection />
 
       <section className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6">
-        <h2 className="font-serif mb-8 text-3xl tracking-tight sm:text-4xl">
-          Questions
+        <h2 className="font-serif mb-8 text-3xl tracking-tight sm:text-5xl">
+          Good <span className="text-gold-gradient">questions</span>
         </h2>
         <Accordion type="single" collapsible className="w-full">
           {FAQS.map((faq) => (
@@ -279,16 +346,25 @@ export default function Index() {
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-24 sm:px-6">
-        <Card className="bg-primary text-primary-foreground items-center gap-5 p-10 text-center sm:p-14">
-          <h2 className="font-serif text-3xl tracking-tight text-balance sm:text-4xl">
-            Your next check-in could take ten seconds.
+        <Card className="dark bg-royal bg-card text-foreground glow-gold border-primary/40 relative items-center gap-5 overflow-hidden p-10 text-center sm:p-14">
+          <div
+            aria-hidden
+            className="bg-geo absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <h2 className="relative font-serif text-3xl tracking-tight text-balance sm:text-5xl">
+            Your next check-in could take{" "}
+            <span className="text-gold-gradient animate-shimmer">ten seconds.</span>
           </h2>
-          <p className="max-w-xl opacity-80">
+          <p className="text-muted-foreground relative max-w-xl">
             Scan a passport, confirm the details, and let the spreadsheet build
             itself.
           </p>
           <Authenticated>
-            <Button size="lg" variant="secondary" asChild>
+            <Button
+              size="lg"
+              className="bg-gold-gradient text-primary-foreground relative shadow-[0_10px_40px_-10px_var(--gold)] hover:brightness-110"
+              asChild
+            >
               <Link to="/scan">
                 <ScanLine className="size-4" />
                 Scan a passport
@@ -298,7 +374,7 @@ export default function Index() {
           <Unauthenticated>
             <SignInButton
               size="lg"
-              variant="secondary"
+              className="bg-gold-gradient text-primary-foreground relative shadow-[0_10px_40px_-10px_var(--gold)] hover:brightness-110"
               signInText="Get started free"
             />
           </Unauthenticated>

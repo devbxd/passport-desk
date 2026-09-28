@@ -17,11 +17,17 @@ const NAV_ITEMS = [
 
 function Brand() {
   return (
-    <Link to="/" className="flex items-center gap-2.5">
-      <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
-        <ScanLine className="size-4" />
+    <Link to="/" className="group flex items-center gap-3">
+      <span className="ring-primary/40 group-hover:ring-primary relative size-10 shrink-0 overflow-hidden rounded-full ring-2 transition-shadow group-hover:shadow-[0_0_18px_-2px_var(--gold)]">
+        <img
+          src="/logo.jpg"
+          alt=""
+          width={80}
+          height={80}
+          className="size-full scale-[1.22] object-cover"
+        />
       </span>
-      <span className="font-serif text-xl leading-none tracking-tight">
+      <span className="text-gold-gradient animate-shimmer font-serif text-2xl leading-none tracking-tight">
         Passport&nbsp;Desk
       </span>
     </Link>
@@ -63,7 +69,7 @@ function UserBadge() {
 export default function AppLayout() {
   return (
     <div className="bg-background flex min-h-screen flex-col">
-      <header className="bg-background/85 sticky top-0 z-30 border-b backdrop-blur">
+      <header className="bg-background/75 border-primary/20 sticky top-0 z-30 border-b shadow-[0_1px_30px_-12px_var(--gold)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6">
           <Brand />
           <nav className="hidden items-center gap-1 md:flex">

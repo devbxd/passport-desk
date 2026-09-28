@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="/icon/icon-192.png" />
     <!-- PWA Configuration -->
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#1d2a53" />
+    <meta name="theme-color" content="#150b25" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -24,7 +24,9 @@
       content="Scan or upload a passport photo and export clean, verified traveller data to Excel in seconds."
     />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://pass2excel.site/logo.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://pass2excel.site/logo.jpg" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,12 +41,7 @@
     <script>
       try {
         let theme = localStorage.getItem("theme");
-        if (theme === "system" || !theme) {
-          let prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-          ).matches;
-          theme = prefersDark ? "dark" : "light";
-        }
+        if (theme !== "light" && theme !== "dark") theme = "dark";
         document.documentElement.classList.add(theme);
       } catch (e) {}
     </script>
