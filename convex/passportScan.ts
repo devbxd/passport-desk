@@ -64,7 +64,7 @@ Arabic text — many documents print information in Arabic script as well as (or
 - "surnameAr" / "givenNamesAr": the holder's family name and given name(s) in Arabic.
 - "fatherNameAr" / "motherNameAr": the father's and mother's names in Arabic, when printed.
 - "placeOfBirthAr", "nationalityAr", "professionAr", "addressAr", "issuingAuthorityAr": the matching values printed in Arabic.
-- "otherArabic": any other Arabic text on the data page that does not fit the fields above (e.g. spouse's name, remarks), one item per line written as "<printed Arabic label>: <value>". Ignore pre-printed headings such as the country name or the word "passport".
+- "otherArabic": any other Arabic information on the data page that does not fit the fields above (e.g. registry place and number, spouse's name, remarks), one item per line written as "<Arabic label>: <value>", using only the Arabic part of the printed label. Never repeat a value already returned in another field, skip items whose value is blank or just "-", and skip the signature box and pre-printed headings such as the country name or the word "passport".
 - The Latin fields (surname, givenNames, placeOfBirth, ...) keep their Latin-script values as printed. If a value is printed only in Arabic, leave the Latin field empty rather than transliterating.
 - If the document has no Arabic text, return empty strings for all Arabic fields.`;
 
