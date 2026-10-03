@@ -3,6 +3,7 @@ import {
   EMPTY_PASSPORT,
   calculateAge,
   getExpiryAlerts,
+  pickPassportFields,
   validatePassportFields,
 } from "@/lib/passport.ts";
 
@@ -158,5 +159,23 @@ describe("getExpiryAlerts", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe("pickPassportFields", () => {
+  it("fills Arabic fields missing from older records with empty strings", () => {
+    const fields = pickPassportFields({ surname: "DOE", givenNamesAr: "محمد" });
+    expect(fields.surname).toBe("DOE");
+    expect(fields.givenNamesAr).toBe("محمد");
+    expect(fields.surnameAr).toBe("");
+    expect(Object.keys(fields).sort()).toEqual(Object.keys(EMPTY_PASSPORT).sort());
+  });
+
+  it("drops anything that is not a passport field", () => {
+    const fields = pickPassportFields({
+      surname: "DOE",
+      _id: "abc",
+    } as Parameters<typeof pickPassportFields>[0]);
+    expect(fields).not.toHaveProperty("_id");
   });
 });

@@ -23,6 +23,16 @@ const PassportData = z.object({
   mrz: z.string(),
   confidence: z.number(),
   notes: z.string(),
+  surnameAr: z.string(),
+  givenNamesAr: z.string(),
+  fatherNameAr: z.string(),
+  motherNameAr: z.string(),
+  placeOfBirthAr: z.string(),
+  nationalityAr: z.string(),
+  professionAr: z.string(),
+  addressAr: z.string(),
+  issuingAuthorityAr: z.string(),
+  otherArabic: z.string(),
 });
 
 export type PassportExtraction = z.infer<typeof PassportData>;
@@ -47,7 +57,16 @@ Extract every field from the passport image. Rules:
 - Use UPPERCASE for surname and givenNames, exactly as printed.
 - If a field is genuinely not present or unreadable, return an empty string. Never invent data.
 - "confidence" is your overall confidence from 0 to 100.
-- "notes" holds a short warning if the image is blurry, cropped, or a field was guessed. Otherwise empty string.`;
+- "notes" holds a short warning if the image is blurry, cropped, or a field was guessed. Otherwise empty string.
+
+Arabic text — many documents print information in Arabic script as well as (or instead of) Latin script:
+- Fill the fields ending in "Ar" with the Arabic text EXACTLY as printed, in Arabic script. Never transliterate, translate or romanize it, and never put Latin text in these fields.
+- "surnameAr" / "givenNamesAr": the holder's family name and given name(s) in Arabic.
+- "fatherNameAr" / "motherNameAr": the father's and mother's names in Arabic, when printed.
+- "placeOfBirthAr", "nationalityAr", "professionAr", "addressAr", "issuingAuthorityAr": the matching values printed in Arabic.
+- "otherArabic": any other Arabic text on the data page that does not fit the fields above (e.g. spouse's name, remarks), one item per line written as "<printed Arabic label>: <value>". Ignore pre-printed headings such as the country name or the word "passport".
+- The Latin fields (surname, givenNames, placeOfBirth, ...) keep their Latin-script values as printed. If a value is printed only in Arabic, leave the Latin field empty rather than transliterating.
+- If the document has no Arabic text, return empty strings for all Arabic fields.`;
 
 export const extract = action({
   args: { storageId: v.id("_storage") },

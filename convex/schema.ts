@@ -77,6 +77,18 @@ export default defineSchema({
     mrz: v.string(),
     confidence: v.number(),
     notes: v.string(),
+    // Arabic text as printed on the document. Optional because records
+    // scanned before these fields existed don't have them.
+    surnameAr: v.optional(v.string()),
+    givenNamesAr: v.optional(v.string()),
+    fatherNameAr: v.optional(v.string()),
+    motherNameAr: v.optional(v.string()),
+    placeOfBirthAr: v.optional(v.string()),
+    nationalityAr: v.optional(v.string()),
+    professionAr: v.optional(v.string()),
+    addressAr: v.optional(v.string()),
+    issuingAuthorityAr: v.optional(v.string()),
+    otherArabic: v.optional(v.string()),
   })
     .index("by_owner", ["ownerTokenIdentifier"])
     .index("by_storage", ["storageId"]),

@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import {
+  ARABIC_FIELDS,
   PASSPORT_FIELDS,
   REQUIRED_FIELDS,
   calculateAge,
@@ -120,6 +121,40 @@ export default function PassportForm({
           );
         })}
       </div>
+
+      <fieldset className="space-y-4 border-t pt-5">
+        <legend className="text-muted-foreground pr-2 text-xs font-medium tracking-wide uppercase">
+          Arabic text
+        </legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {ARABIC_FIELDS.map((field) => (
+            <div
+              key={field.key}
+              className={field.multiline ? "space-y-2 sm:col-span-2" : "space-y-2"}
+            >
+              <Label htmlFor={field.key}>{field.label}</Label>
+              {field.multiline ? (
+                <Textarea
+                  id={field.key}
+                  dir="rtl"
+                  lang="ar"
+                  rows={2}
+                  value={value[field.key]}
+                  onChange={(event) => setField(field.key, event.target.value)}
+                />
+              ) : (
+                <Input
+                  id={field.key}
+                  dir="rtl"
+                  lang="ar"
+                  value={value[field.key]}
+                  onChange={(event) => setField(field.key, event.target.value)}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </fieldset>
 
       <div className="space-y-2">
         <Label htmlFor="mrz">Machine readable zone</Label>

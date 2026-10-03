@@ -7,6 +7,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import {
   EMPTY_PASSPORT,
   fullName,
+  pickPassportFields,
   REQUIRED_FIELDS,
   validatePassportFields,
   type PassportRecordFields,
@@ -209,22 +210,7 @@ export default function useBatchScanner() {
               ? {
                   ...entry,
                   confidence: result.confidence,
-                  fields: {
-                    documentType: result.documentType,
-                    surname: result.surname,
-                    givenNames: result.givenNames,
-                    passportNumber: result.passportNumber,
-                    nationality: result.nationality,
-                    issuingCountry: result.issuingCountry,
-                    dateOfBirth: result.dateOfBirth,
-                    sex: result.sex,
-                    placeOfBirth: result.placeOfBirth,
-                    dateOfIssue: result.dateOfIssue,
-                    dateOfExpiry: result.dateOfExpiry,
-                    personalNumber: result.personalNumber,
-                    mrz: result.mrz,
-                    notes: result.notes,
-                  },
+                  fields: pickPassportFields(result),
                   stage: "review",
                 }
               : entry,

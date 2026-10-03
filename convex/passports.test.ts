@@ -299,3 +299,47 @@ describe("passport record verification", () => {
     ).rejects.toThrow("Please sign in to continue");
   });
 });
+
+describe("Arabic passport fields", () => {
+  it("saves and updates the Arabic text alongside the Latin fields", async () => {
+    const t = createTestBackend();
+    const owner = t.withIdentity({ subject: "owner" });
+    const { storageId } = await createTrackedUpload(t, owner);
+
+    const id = await owner.mutation(api.passports.create, {
+      storageId,
+      confidence: 95,
+      ...PASSPORT_FIELDS,
+      surnameAr: "بن علي",
+      givenNamesAr: "محمد",
+      fatherNameAr: "أحمد",
+    });
+    await owner.mutation(api.passports.update, {
+      id,
+      ...PASSPORT_FIELDS,
+      surnameAr: "بن علي",
+      givenNamesAr: "محمد الأمين",
+      fatherNameAr: "أحمد",
+    });
+
+    const [record] = await owner.query(api.passports.listAll, {});
+    expect(record?.surnameAr).toBe("بن علي");
+    expect(record?.givenNamesAr).toBe("محمد الأمين");
+    expect(record?.fatherNameAr).toBe("أحمد");
+  });
+
+  it("still accepts records saved without any Arabic fields", async () => {
+    const t = createTestBackend();
+    const owner = t.withIdentity({ subject: "owner" });
+    const { storageId } = await createTrackedUpload(t, owner);
+
+    await owner.mutation(api.passports.create, {
+      storageId,
+      confidence: 95,
+      ...PASSPORT_FIELDS,
+    });
+
+    const [record] = await owner.query(api.passports.listAll, {});
+    expect(record?.surnameAr).toBeUndefined();
+  });
+});

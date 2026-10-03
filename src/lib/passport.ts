@@ -12,7 +12,20 @@ export type PassportFieldKey =
   | "dateOfExpiry"
   | "personalNumber"
   | "mrz"
-  | "notes";
+  | "notes"
+  | ArabicFieldKey;
+
+export type ArabicFieldKey =
+  | "surnameAr"
+  | "givenNamesAr"
+  | "fatherNameAr"
+  | "motherNameAr"
+  | "placeOfBirthAr"
+  | "nationalityAr"
+  | "professionAr"
+  | "addressAr"
+  | "issuingAuthorityAr"
+  | "otherArabic";
 
 export type PassportRecordFields = Record<PassportFieldKey, string>;
 
@@ -31,10 +44,35 @@ export const EMPTY_PASSPORT: PassportRecordFields = {
   personalNumber: "",
   mrz: "",
   notes: "",
+  surnameAr: "",
+  givenNamesAr: "",
+  fatherNameAr: "",
+  motherNameAr: "",
+  placeOfBirthAr: "",
+  nationalityAr: "",
+  professionAr: "",
+  addressAr: "",
+  issuingAuthorityAr: "",
+  otherArabic: "",
 };
 
+/**
+ * Copies just the passport fields out of a scan result or stored record.
+ * Records saved before a field existed come back without it, so it defaults
+ * to an empty string.
+ */
+export function pickPassportFields(
+  source: Partial<Record<PassportFieldKey, string | undefined>>,
+): PassportRecordFields {
+  const fields = { ...EMPTY_PASSPORT };
+  for (const key of Object.keys(EMPTY_PASSPORT) as PassportFieldKey[]) {
+    fields[key] = source[key] ?? "";
+  }
+  return fields;
+}
+
 type FieldDefinition = {
-  key: PassportFieldKey;
+  key: Exclude<PassportFieldKey, ArabicFieldKey>;
   label: string;
   type: "text" | "date" | "sex";
   excelHeader: string;
@@ -102,6 +140,61 @@ export const PASSPORT_FIELDS: FieldDefinition[] = [
     label: "Personal number",
     type: "text",
     excelHeader: "Personal Number",
+  },
+];
+
+/**
+ * Text printed in Arabic on the document, kept exactly as written (never
+ * transliterated) alongside the Latin fields above.
+ */
+export const ARABIC_FIELDS: {
+  key: ArabicFieldKey;
+  label: string;
+  excelHeader: string;
+  multiline?: boolean;
+}[] = [
+  { key: "surnameAr", label: "Surname (Arabic)", excelHeader: "Surname (Arabic)" },
+  {
+    key: "givenNamesAr",
+    label: "Given names (Arabic)",
+    excelHeader: "Given Names (Arabic)",
+  },
+  {
+    key: "fatherNameAr",
+    label: "Father's name (Arabic)",
+    excelHeader: "Father's Name (Arabic)",
+  },
+  {
+    key: "motherNameAr",
+    label: "Mother's name (Arabic)",
+    excelHeader: "Mother's Name (Arabic)",
+  },
+  {
+    key: "placeOfBirthAr",
+    label: "Place of birth (Arabic)",
+    excelHeader: "Place of Birth (Arabic)",
+  },
+  {
+    key: "nationalityAr",
+    label: "Nationality (Arabic)",
+    excelHeader: "Nationality (Arabic)",
+  },
+  {
+    key: "professionAr",
+    label: "Profession (Arabic)",
+    excelHeader: "Profession (Arabic)",
+  },
+  { key: "addressAr", label: "Address (Arabic)", excelHeader: "Address (Arabic)" },
+  {
+    key: "issuingAuthorityAr",
+    label: "Issuing authority (Arabic)",
+    excelHeader: "Issuing Authority (Arabic)",
+  },
+  {
+    key: "otherArabic",
+    label: "Other Arabic text",
+    excelHeader: "Other Arabic Text",
+    multiline: true,
   },
 ];
 

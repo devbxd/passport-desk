@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 import {
+  ARABIC_FIELDS,
   PASSPORT_FIELDS,
   calculateAge,
   type PassportRecordFields,
@@ -18,12 +19,15 @@ const HEADERS: string[] = [
   ...PASSPORT_FIELDS.flatMap((field) =>
     field.key === "dateOfBirth" ? [field.excelHeader, "Age"] : [field.excelHeader],
   ),
+  ...ARABIC_FIELDS.map((field) => field.excelHeader),
   ...EXTRA_HEADERS,
 ];
 
+const ARABIC_HEADERS = new Set(ARABIC_FIELDS.map((field) => field.excelHeader));
+
 function toRow(record: ExportableRecord): Record<string, string | number> {
   const row: Record<string, string | number> = {};
-  for (const field of PASSPORT_FIELDS) {
+  for (const field of [...PASSPORT_FIELDS, ...ARABIC_FIELDS]) {
     row[field.excelHeader] = record[field.key];
   }
   row["Age"] = calculateAge(record.dateOfBirth) ?? "";
@@ -43,7 +47,14 @@ export function exportPassportsToExcel(
   const sheet = XLSX.utils.json_to_sheet(records.map(toRow), { header: HEADERS });
 
   sheet["!cols"] = HEADERS.map((header) => ({
-    wch: header === "MRZ" ? 46 : header === "Age" ? 8 : Math.max(14, header.length + 2),
+    wch:
+      header === "MRZ"
+        ? 46
+        : header === "Age"
+          ? 8
+          : ARABIC_HEADERS.has(header)
+            ? Math.max(24, header.length + 2)
+            : Math.max(14, header.length + 2),
   }));
   sheet["!autofilter"] = {
     ref: XLSX.utils.encode_range({

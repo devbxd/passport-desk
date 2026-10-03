@@ -60,6 +60,7 @@ import {
   daysUntilExpiry,
   fullName,
   getExpiryAlerts,
+  pickPassportFields,
   type PassportRecordFields,
 } from "@/lib/passport.ts";
 import { exportPassportsToExcel } from "@/lib/excel.ts";
@@ -74,22 +75,7 @@ import RecordsFilters, {
 type RecordRow = Doc<"passports"> & { imageUrl: string | null };
 
 function toFields(record: RecordRow): PassportRecordFields {
-  return {
-    documentType: record.documentType,
-    surname: record.surname,
-    givenNames: record.givenNames,
-    passportNumber: record.passportNumber,
-    nationality: record.nationality,
-    issuingCountry: record.issuingCountry,
-    dateOfBirth: record.dateOfBirth,
-    sex: record.sex,
-    placeOfBirth: record.placeOfBirth,
-    dateOfIssue: record.dateOfIssue,
-    dateOfExpiry: record.dateOfExpiry,
-    personalNumber: record.personalNumber,
-    mrz: record.mrz,
-    notes: record.notes,
-  };
+  return pickPassportFields(record);
 }
 
 function ExpiryCell({ dateOfExpiry }: { dateOfExpiry: string }) {
@@ -169,6 +155,8 @@ function RecordsTable() {
           record.passportNumber,
           record.nationality,
           record.issuingCountry,
+          record.surnameAr,
+          record.givenNamesAr,
         ]
           .join(" ")
           .toLowerCase()

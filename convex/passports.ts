@@ -143,6 +143,17 @@ export const passportFields = {
   personalNumber: v.string(),
   mrz: v.string(),
   notes: v.string(),
+  // Optional so an older cached copy of the app can still save records.
+  surnameAr: v.optional(v.string()),
+  givenNamesAr: v.optional(v.string()),
+  fatherNameAr: v.optional(v.string()),
+  motherNameAr: v.optional(v.string()),
+  placeOfBirthAr: v.optional(v.string()),
+  nationalityAr: v.optional(v.string()),
+  professionAr: v.optional(v.string()),
+  addressAr: v.optional(v.string()),
+  issuingAuthorityAr: v.optional(v.string()),
+  otherArabic: v.optional(v.string()),
 };
 
 const UPLOAD_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
