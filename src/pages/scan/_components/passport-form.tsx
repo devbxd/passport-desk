@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { HijriDate, HijriDateCard } from "@/components/hijri-date.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
@@ -23,12 +24,15 @@ type PassportFormProps = {
   value: PassportRecordFields;
   onChange: (next: PassportRecordFields) => void;
   validationIssues?: PassportValidationIssue[];
+  /** Hijri scan mode: each date gets a highlighted Hijri equivalent. */
+  hijriMode?: boolean;
 };
 
 export default function PassportForm({
   value,
   onChange,
   validationIssues = [],
+  hijriMode = false,
 }: PassportFormProps) {
   const setField = (key: PassportFieldKey, fieldValue: string) => {
     onChange({ ...value, [key]: fieldValue });
@@ -87,6 +91,12 @@ export default function PassportForm({
                   onChange={(event) => setField(field.key, event.target.value)}
                 />
               )}
+              {field.type === "date" &&
+                (hijriMode ? (
+                  <HijriDateCard date={value[field.key]} />
+                ) : (
+                  <HijriDate date={value[field.key]} className="text-right" />
+                ))}
               {fieldIssues.length > 0 && (
                 <div id={issueId} className="space-y-1">
                   {fieldIssues.map((issue) => (

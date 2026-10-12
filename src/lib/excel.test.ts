@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildPassportRows, type ExportableRecord } from "@/lib/excel.ts";
-import { toHijriArabic } from "@/lib/hijri.ts";
+import { toHijri, toHijriArabic } from "@/lib/hijri.ts";
 import { EMPTY_PASSPORT } from "@/lib/passport.ts";
 
 const record: ExportableRecord = {
@@ -17,6 +17,10 @@ describe("toHijriArabic", () => {
   it("writes the Umm al-Qura date in Arabic", () => {
     // 1 Ramadan 1447 began on 18 February 2026 (Umm al-Qura).
     expect(toHijriArabic("2026-02-18")).toBe("١ رمضان ١٤٤٧ هـ");
+  });
+
+  it("can also write it in English", () => {
+    expect(toHijri("2026-02-18", "en")).toMatch(/Ramadan.*1.*1447/);
   });
 
   it("returns null for missing or impossible dates", () => {

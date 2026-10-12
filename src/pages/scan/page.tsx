@@ -42,6 +42,8 @@ import { api } from "@/convex/_generated/api.js";
 import BatchQueue from "./_components/batch-queue.tsx";
 import ImageSource from "./_components/image-source.tsx";
 import PassportForm from "./_components/passport-form.tsx";
+import ScanModeSwitch from "./_components/scan-mode-switch.tsx";
+import useScanMode from "./_hooks/use-scan-mode.ts";
 import useBatchScanner from "./_hooks/use-batch-scanner.ts";
 
 function ScanLimitCard() {
@@ -84,6 +86,8 @@ function BatchScanWorkspace() {
   const missingRequired = draft
     ? REQUIRED_FIELDS.filter((key) => !draft.fields[key].trim()).length
     : 0;
+
+  const [scanMode, changeScanMode] = useScanMode();
 
   const limitReached = usage?.limitReached ?? false;
   const canAddScan = scanner.canAddScan && !limitReached;
@@ -138,6 +142,7 @@ function BatchScanWorkspace() {
           <div className={`grid gap-6 ${canAddScan ? "lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]" : "lg:grid-cols-1"}`}>
             {canAddScan && (
               <div className="space-y-4">
+                <ScanModeSwitch value={scanMode} onChange={changeScanMode} />
                 <ImageSource
                   onSelect={(blob, preview) => void scanner.selectImage(blob, preview)}
                   onSelectMultiple={(files) => void scanner.selectImages(files)}
@@ -265,6 +270,7 @@ function BatchScanWorkspace() {
                         value={draft.fields}
                         onChange={scanner.updateFields}
                         validationIssues={validationIssues}
+                        hijriMode={scanMode === "hijri"}
                       />
                       <div className="flex flex-wrap items-center gap-3 border-t pt-4">
                         <Button

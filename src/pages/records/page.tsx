@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { api } from "@/convex/_generated/api.js";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
+import { HijriDate } from "@/components/hijri-date.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Card } from "@/components/ui/card.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -433,10 +434,14 @@ function RecordsTable() {
                     {record.passportNumber || "—"}
                   </TableCell>
                   <TableCell>{record.nationality || "—"}</TableCell>
-                  <TableCell>{record.dateOfBirth || "—"}</TableCell>
+                  <TableCell>
+                    {record.dateOfBirth || "—"}
+                    <HijriDate date={record.dateOfBirth} className="mt-0.5 text-left" />
+                  </TableCell>
                   <TableCell>{calculateAge(record.dateOfBirth) ?? "—"}</TableCell>
                   <TableCell>
                     <ExpiryCell dateOfExpiry={record.dateOfExpiry} />
+                    <HijriDate date={record.dateOfExpiry} className="mt-0.5 text-left" />
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {new Date(record._creationTime).toLocaleDateString()}
