@@ -63,7 +63,7 @@ import {
   pickPassportFields,
   type PassportRecordFields,
 } from "@/lib/passport.ts";
-import { exportPassportsToExcel } from "@/lib/excel.ts";
+import { exportPassportsToExcel, type ExportCalendar } from "@/lib/excel.ts";
 import EditRecordDialog from "./_components/edit-record-dialog.tsx";
 import CheckInCounters from "./_components/checkin-counters.tsx";
 import ExpiryAlerts from "./_components/expiry-alerts.tsx";
@@ -225,7 +225,7 @@ function RecordsTable() {
     );
   };
 
-  const handleExport = () => {
+  const handleExport = (calendar: ExportCalendar) => {
     const chosen =
       selected.size > 0
         ? filtered.filter((record) => selected.has(record._id))
@@ -240,9 +240,10 @@ function RecordsTable() {
         _creationTime: record._creationTime,
         confidence: record.confidence,
       })),
+      calendar,
     );
     toast.success(
-      `Exported ${chosen.length} record${chosen.length > 1 ? "s" : ""} to Excel`,
+      `Exported ${chosen.length} record${chosen.length > 1 ? "s" : ""} to Excel${calendar === "hijri" ? " (Hijri dates)" : ""}`,
     );
   };
 
@@ -376,15 +377,19 @@ function RecordsTable() {
             className="pl-9"
           />
         </div>
-        <div className="flex flex-1 items-center justify-end gap-3">
+        <div className="flex flex-1 flex-wrap items-center justify-end gap-3">
           {selected.size > 0 && (
             <span className="text-muted-foreground text-sm">
               {selected.size} selected
             </span>
           )}
-          <Button onClick={handleExport}>
+          <Button onClick={() => handleExport("gregorian")}>
             <FileSpreadsheet className="size-4" />
             Export to Excel
+          </Button>
+          <Button variant="outline" onClick={() => handleExport("hijri")}>
+            <FileSpreadsheet className="size-4" />
+            Export with Hijri dates
           </Button>
         </div>
       </div>
